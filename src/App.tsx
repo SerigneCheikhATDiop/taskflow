@@ -1,3 +1,12 @@
+import { Header } from './components/Header'
+import { mockTasks } from './data/mockTasks'
+import { Board } from './features/tasks/Board'
+
 export default function App() {
-  return <h1 className="text-3xl font-bold text-blue-500">TaskFlow</h1>
+  return (
+    <>
+      <Header projectName="Projet 1" />
+      <Board tasks={mockTasks} />
+    </>
+  )
 }
