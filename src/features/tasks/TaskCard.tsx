@@ -1,12 +1,13 @@
-import type { Task } from '../../api/types'
+import type { Task, TaskStatus } from '../../api/types'
 import { PriorityBadge } from '../../components/PriorityBadge'
 
 interface TaskCardProps {
   task: Task
   compact?: boolean
+  onChangeStatus: (id: number, status: TaskStatus) => void
 }
 
-export function TaskCard({ task, compact = false }: TaskCardProps) {
+export function TaskCard({ task, compact = false, onChangeStatus }: TaskCardProps) {
   const today = new Date().toISOString().slice(0, 10)
   const isLate = task.dueDate !== null && task.dueDate < today && task.status !== 'DONE'
 
@@ -22,6 +23,15 @@ export function TaskCard({ task, compact = false }: TaskCardProps) {
           </span>
         )}
       </div>
+      <select
+        value={task.status}
+        onChange={(e) => onChangeStatus(task.id, e.target.value as TaskStatus)}
+        className="mt-2 rounded border px-2 py-1 text-sm"
+      >
+        <option value="TODO">À faire</option>
+        <option value="DOING">En cours</option>
+        <option value="DONE">Terminé</option>
+      </select>
     </article>
   )
 }
