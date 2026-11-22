@@ -1,8 +1,12 @@
 import type { TaskStatus } from '../../api/types'
-import { updateTaskStatus } from '../../api/tasksApi'
+import { createTask, deleteTask, updateTaskStatus } from '../../api/tasksApi'
+import type { NewTask } from '../../api/tasksApi'
 import { useTasks } from '../../hooks/useTasks'
 import { Column } from './Column'
 import { TaskCard } from './TaskCard'
+import { TaskForm } from './TaskForm'
+
+const PROJECT_ID = 1
 
 const columns: { status: TaskStatus; title: string }[] = [
   { status: 'TODO', title: 'À faire' },
@@ -11,19 +15,37 @@ const columns: { status: TaskStatus; title: string }[] = [
 ]
 
 export function Board() {
-  const { tasks, loading, error, reload } = useTasks(1)
+  const { tasks, loading, error, reload } = useTasks(PROJECT_ID)
 
-  async function handleChangeStatus(id: number, status: TaskStatus) {
-    await updateTaskStatus(id, status)
+  async function handleCreate(task: NewTask) {
+    await createTask(task)
     reload()
   }
 
-  if (loading) {
-    return <p className="p-4">Chargement…</p>
+  async function handleChangeStatus(id: number, status: TaskStatus) {
+    try {
+      await updateTaskStatus(id, status)
+      reload()
+    } catch {
+      window.alert('Le changement de statut a échoué.')
+    }
   }
 
-  if (error) {
-    return (
+  async function handleDelete(id: number) {
+    try {
+      await deleteTask(id)
+      reload()
+    } catch {
+      window.alert('La suppression a échoué.')
+    }
+  }
+
+  let content
+
+  if (loading) {
+    content = <p className="p-4">Chargement…</p>
+  } else if (error) {
+    content = (
       <div className="p-4">
         <p className="text-red-600">{error}</p>
         <button
@@ -34,29 +56,37 @@ export function Board() {
         </button>
       </div>
     )
+  } else {
+    content = (
+      <div className="grid gap-4 p-4 md:grid-cols-3">
+        {columns.map(({ status, title }) => {
+          const columnTasks = tasks.filter((task) => task.status === status)
+
+          return (
+            <Column key={status} title={title} count={columnTasks.length}>
+              {columnTasks.length === 0 ? (
+                <p className="text-gray-500">Aucune tâche</p>
+              ) : (
+                columnTasks.map((task) => (
+                  <TaskCard
+                    key={task.id}
+                    task={task}
+                    onChangeStatus={handleChangeStatus}
+                    onDelete={handleDelete}
+                  />
+                ))
+              )}
+            </Column>
+          )
+        })}
+      </div>
+    )
   }
 
   return (
-    <div className="grid gap-4 p-4 md:grid-cols-3">
-      {columns.map(({ status, title }) => {
-        const columnTasks = tasks.filter((task) => task.status === status)
-
-        return (
-          <Column key={status} title={title} count={columnTasks.length}>
-            {columnTasks.length === 0 ? (
-              <p className="text-gray-500">Aucune tâche</p>
-            ) : (
-              columnTasks.map((task) => (
-                <TaskCard
-                  key={task.id}
-                  task={task}
-                  onChangeStatus={handleChangeStatus}
-                />
-              ))
-            )}
-          </Column>
-        )
-      })}
-    </div>
+    <>
+      <TaskForm projectId={PROJECT_ID} onCreate={handleCreate} />
+      {content}
+    </>
   )
 }
