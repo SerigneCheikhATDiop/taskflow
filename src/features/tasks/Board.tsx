@@ -1,6 +1,6 @@
-import { useState } from 'react'
-import type { Task, TaskStatus } from '../../api/types'
-import { mockTasks } from '../../data/mockTasks'
+import type { TaskStatus } from '../../api/types'
+import { updateTaskStatus } from '../../api/tasksApi'
+import { useTasks } from '../../hooks/useTasks'
 import { Column } from './Column'
 import { TaskCard } from './TaskCard'
 
@@ -11,11 +11,28 @@ const columns: { status: TaskStatus; title: string }[] = [
 ]
 
 export function Board() {
-  const [tasks, setTasks] = useState<Task[]>(mockTasks)
+  const { tasks, loading, error, reload } = useTasks(1)
 
-  function handleChangeStatus(id: number, status: TaskStatus) {
-    setTasks((current) =>
-      current.map((task) => (task.id === id ? { ...task, status } : task)),
+  async function handleChangeStatus(id: number, status: TaskStatus) {
+    await updateTaskStatus(id, status)
+    reload()
+  }
+
+  if (loading) {
+    return <p className="p-4">Chargement…</p>
+  }
+
+  if (error) {
+    return (
+      <div className="p-4">
+        <p className="text-red-600">{error}</p>
+        <button
+          onClick={reload}
+          className="mt-2 rounded bg-blue-600 px-3 py-1 text-white"
+        >
+          Réessayer
+        </button>
+      </div>
     )
   }
 

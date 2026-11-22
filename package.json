@@ -7,7 +7,10 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "api": "json-server --watch db.json --port 3001",
+    "api:auth": "json-server-auth db.json --watch --port 3001 -r routes.json",
+    "dev:all": "concurrently \"npm:dev\" \"npm:api\""
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.3.5",
@@ -20,6 +23,9 @@
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "@vitejs/plugin-react": "^6.1.2",
+    "concurrently": "^10.0.7",
+    "json-server": "^0.17.4",
+    "json-server-auth": "^2.1.0",
     "oxlint": "^1.90.0",
     "typescript": "~7.0.2",
     "vite": "^8.3.6"
