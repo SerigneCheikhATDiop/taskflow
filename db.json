@@ -61,17 +61,6 @@
       "createdAt": "2026-10-14T09:00:00Z"
     },
     {
-      "id": 6,
-      "projectId": 1,
-      "title": "Créer le projet Vite",
-      "description": "Template react-ts.",
-      "status": "DONE",
-      "priority": "HIGH",
-      "assigneeId": 1,
-      "dueDate": "2026-10-15",
-      "createdAt": "2026-10-08T09:00:00Z"
-    },
-    {
       "id": 7,
       "projectId": 1,
       "title": "Définir les types",

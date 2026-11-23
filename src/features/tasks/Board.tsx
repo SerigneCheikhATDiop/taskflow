@@ -1,7 +1,9 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { TaskStatus } from '../../api/types'
 import { createTask, deleteTask, updateTaskStatus } from '../../api/tasksApi'
 import type { NewTask } from '../../api/tasksApi'
+import { useDebounce } from '../../hooks/useDebounce'
+import { useDocumentTitle } from '../../hooks/useDocumentTitle'
 import { useTasks } from '../../hooks/useTasks'
 import { Column } from './Column'
 import { TaskCard } from './TaskCard'
@@ -19,8 +21,16 @@ const columns: { status: TaskStatus; title: string }[] = [
 export function Board() {
   const { tasks, loading, error, reload } = useTasks(PROJECT_ID)
   const [search, setSearch] = useState('')
+  const debouncedSearch = useDebounce(search, 300)
+  const searchRef = useRef<HTMLInputElement>(null)
 
-  const query = search.trim().toLowerCase()
+  useDocumentTitle(`TaskFlow – ${tasks.length} tâches`)
+
+  useEffect(() => {
+    searchRef.current?.focus()
+  }, [])
+
+  const query = debouncedSearch.trim().toLowerCase()
   const filteredTasks = tasks.filter((task) =>
     task.title.toLowerCase().includes(query),
   )
@@ -105,6 +115,7 @@ export function Board() {
         </label>
         <input
           id="search"
+          ref={searchRef}
           type="search"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
