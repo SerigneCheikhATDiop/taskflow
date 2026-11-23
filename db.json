@@ -92,6 +92,28 @@
       "assigneeId": null,
       "dueDate": null,
       "createdAt": "2026-10-09T10:00:00Z"
+    },
+    {
+      "projectId": 1,
+      "title": "Consultation",
+      "description": "consultation a faire",
+      "status": "TODO",
+      "priority": "HIGH",
+      "assigneeId": null,
+      "dueDate": "2026-11-25",
+      "createdAt": "2026-11-22T22:38:20.342Z",
+      "id": 10
+    },
+    {
+      "projectId": 1,
+      "title": "Examen",
+      "description": "revision a faire",
+      "status": "TODO",
+      "priority": "MEDIUM",
+      "assigneeId": null,
+      "dueDate": "2026-12-01",
+      "createdAt": "2026-11-22T22:39:05.683Z",
+      "id": 11
     }
   ],
   "comments": []
